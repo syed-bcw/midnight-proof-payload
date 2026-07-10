@@ -4,7 +4,7 @@ mkdir -p out
 # take URL in argument or use default
 URL=${1:-'http://127.0.0.1:6300'}
 
-curl -X POST "$URL/prove" --data-binary '@prove-a-payload.bin' --output out/prove-a-response.bin
+curl -v -X POST "$URL/prove" --data-binary '@prove-a-payload.bin' --output out/prove-a-response.bin
 
 echo "Response saved to out/prove-a-response.bin"
 
