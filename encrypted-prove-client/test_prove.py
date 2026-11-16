@@ -111,6 +111,17 @@ def write_output(path: Path, data: bytes) -> None:
     path.write_bytes(data)
 
 
+def hexdump(data: bytes, width: int = 16) -> str:
+    lines = []
+    for off in range(0, len(data), width):
+        chunk = data[off : off + width]
+        left = " ".join(f"{b:02x}" for b in chunk[:8])
+        right = " ".join(f"{b:02x}" for b in chunk[8:])
+        ascii_ = "".join(chr(b) if 32 <= b < 127 else "." for b in chunk)
+        lines.append(f"{off:08x}  {left:<23}  {right:<23}  |{ascii_}|")
+    return "\n".join(lines)
+
+
 def print_result(label: str, status: int, headers: dict[str, str], body: bytes) -> None:
     print(f"[{label}] status={status} bytes={len(body)}")
     if "proof-job-id" in headers:
@@ -163,6 +174,7 @@ def run_encrypted(base_url: str, payload: bytes, out_dir: Path) -> int:
     print(
         f"[encrypted] decrypted-bytes={len(decrypted_response)} first-32-bytes={decrypted_response[:32].hex()}"
     )
+    print(hexdump(decrypted_response))
     return status
 
 
